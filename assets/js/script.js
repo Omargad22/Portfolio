@@ -225,38 +225,59 @@ function createParticles() {
 function handleFormSubmit(e) {
     e.preventDefault();
 
-    const formData = new FormData(contactForm);
-    const data = {
-        name: formData.get('name'),
-        email: formData.get('email'),
-        subject: formData.get('subject'),
-        message: formData.get('message')
-    };
-
-    // Show success message
     const button = contactForm.querySelector('button[type="submit"]');
     const originalText = button.innerHTML;
+    const buttonTextSpan = button.querySelector('span');
 
-    button.innerHTML = `
-        <span>Sent Successfully!</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-    `;
-    button.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+    // Change button state to loading
+    if (buttonTextSpan) buttonTextSpan.textContent = 'Sending...';
+    button.disabled = true;
 
-    // Reset form
-    contactForm.reset();
+    // EmailJS Send
+    const serviceID = 'service_9mpsekh';
+    const templateID = 'template_cfwqiij';
 
-    // Reset button after 3 seconds
-    setTimeout(() => {
-        button.innerHTML = originalText;
-        button.style.background = '';
-    }, 3000);
+    emailjs.sendForm(serviceID, templateID, contactForm)
+        .then(() => {
+            // Success State
+            button.innerHTML = `
+                <span>Sent Successfully!</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            `;
+            button.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
 
-    // You can add actual form submission logic here
-    // For example, using EmailJS, Formspree, or your own backend
-    console.log('Form submitted:', data);
+            // Reset form
+            contactForm.reset();
+
+            // Reset button after 3 seconds
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.style.background = '';
+                button.disabled = false;
+            }, 3000);
+        }, (err) => {
+            // Error State
+            button.innerHTML = `
+                <span>Failed! Try Again</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            `;
+            button.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+
+            console.error('EmailJS Error:', err);
+            alert('Failed to send message. Please try again later.');
+
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.style.background = '';
+                button.disabled = false;
+            }, 3000);
+        });
 }
 
 // ===== Parallax Effect =====
