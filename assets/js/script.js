@@ -10,11 +10,11 @@ const contactForm = document.getElementById('contact-form');
 
 // ===== Typing Effect =====
 const typingPhrases = [
-    'Software Engineer',
-    'AI Developer',
+    'Algorithmic Puzzle Solver',
     'Codeforces Expert',
-    'Problem Solver',
-    'Competitive Programmer'
+    'Competitive Programmer',
+    'C++ & Python Engineer',
+    'ICPC Problem Setter'
 ];
 
 let phraseIndex = 0;
